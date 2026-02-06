@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مساعد زمن DVR | م. مهند إيهاب</title>
+    <style>
+        :root {
+            --primary-color: #1e3a8a;
+            --accent-color: #3b82f6;
+            --success-color: #10b981;
+            --text-main: #1f2937;
+            --bg-gradient: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 15px;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 450px;
+            border-top: 6px solid var(--primary-color);
+        }
+
+        .welcome-section {
+            text-align: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .welcome-title {
+            font-size: 1.4rem;
+            color: var(--primary-color);
+            margin: 0 0 10px 0;
+        }
+
+        .dev-info {
+            font-size: 0.85rem;
+            color: #6b7280;
+            line-height: 1.6;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #4b5563;
+        }
+
+        .picker-row {
+            display: flex;
+            gap: 5px;
+            background: #f9fafb;
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px solid #d1d5db;
+        }
+
+        select {
+            flex: 1;
+            padding: 8px 2px;
+            border-radius: 6px;
+            border: 1px solid #cbd5e1;
+            background: white;
+            font-size: 0.85rem;
+            outline: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .btn-calc {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-calc:hover {
+            background: var(--accent-color);
+            transform: translateY(-2px);
+        }
+
+        .btn-copy {
+            background: var(--success-color);
+            color: white;
+            display: none;
+        }
+
+        #result-box {
+            margin-top: 25px;
+            padding: 20px;
+            border-radius: 12px;
+            background: #eff6ff;
+            border: 2px dashed var(--accent-color);
+            display: none;
+            text-align: center;
+        }
+
+        .result-label {
+            font-size: 0.9rem;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .result-time {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #dc2626;
+        }
+
+        .live-clock {
+            font-weight: bold;
+            color: var(--accent-color);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="welcome-section">
+        <h2 class="welcome-title">⏱️ حاسبة التوقيت الذكية</h2>
+        <p class="dev-info">
+            تم التطوير بواسطة <b>المهندس مهند إيهاب التهامي</b>،<br> 
+            خبير هندسة البرمجيات والمتخصص في تطوير الأنظمة الأمنية المتقدمة.
+        </p>
+    </div>
+
+    <div class="input-group">
+        <label>وقت الهاتف الحالي (المرجع):</label>
+        <div id="liveTime" class="live-clock">--:--:--</div>
+    </div>
+
+    <div class="input-group">
+        <label>الوقت الذي تعرضه الكاميرا الآن:</label>
+        <div class="picker-row" id="wrongTimePicker"></div>
+    </div>
+
+    <div class="input-group">
+        <label>وقت الحدث في الواقع (المطلوب):</label>
+        <div class="picker-row" id="desiredTimePicker"></div>
+    </div>
+
+    <button class="btn-calc" onclick="calculate()">إجراء الحسابات الهندسية</button>
+    
+    <div id="result-box">
+        <span class="result-label">توقيت البحث على جهاز الـ DVR:</span>
+        <span id="targetResult" class="result-time"></span>
+    </div>
+
+    <button id="copyBtn" class="btn-copy" onclick="copyToClipboard()">نسخ النتيجة لإرسالها 📋</button>
+</div>
+
+<script>
+    // تحديث ساعة الهاتف الحية
+    setInterval(() => {
+        const now = new Date();
+        document.getElementById('liveTime').innerText = now.toLocaleString('ar-EG');
+    }, 1000);
+
+    // إنشاء القوائم المنسدلة (Scroll)
+    function buildPickers(containerId) {
+        const container = document.getElementById(containerId);
+        const now = new Date();
+        
+        container.innerHTML = `
+            <select class="day">${options(1, 31, now.getDate())}</select>
+            <select class="month" onchange="validateDays(this)">${options(1, 12, now.getMonth()+1)}</select>
+            <select class="year" onchange="validateDays(this)">${options(2020, 2030, now.getFullYear())}</select>
+            <select class="hour">${options(0, 23, now.getHours())}</select>
+            <select class="minute">${options(0, 59, now.getMinutes())}</select>
+        `;
+    }
+
+    function options(start, end, selected) {
+        let str = "";
+        for (let i = start; i <= end; i++) {
+            const label = i < 10 ? "0" + i : i;
+            str += `<option value="${i}" ${i === selected ? 'selected' : ''}>${label}</option>`;
+        }
+        return str;
+    }
+
+    // التأكد من صحة أيام الشهر (فبراير والسنوات الكبيسة)
+    function validateDays(el) {
+        const row = el.parentElement;
+        const daySelect = row.querySelector('.day');
+        const month = parseInt(row.querySelector('.month').value);
+        const year = parseInt(row.querySelector('.year').value);
+        
+        const lastDay = new Date(year, month, 0).getDate();
+        const currentSelectedDay = parseInt(daySelect.value);
+        
+        daySelect.innerHTML = options(1, lastDay, currentSelectedDay > lastDay ? lastDay : currentSelectedDay);
+    }
+
+    function getPickerDate(id) {
+        const p = document.getElementById(id);
+        return new Date(
+            p.querySelector('.year').value,
+            p.querySelector('.month').value - 1,
+            p.querySelector('.day').value,
+            p.querySelector('.hour').value,
+            p.querySelector('.minute').value
+        );
+    }
+
+    function calculate() {
+        const realNow = new Date();
+        const camNow = getPickerDate('wrongTimePicker');
+        const eventReal = getPickerDate('desiredTimePicker');
+
+        // الفرق الزمني (Offset)
+        const offset = realNow - camNow;
+        // التوقيت الذي سجلته الكاميرا فعلياً وقت الحدث
+        const searchTime = new Date(eventReal.getTime() - offset);
+
+        const resultBox = document.getElementById('result-box');
+        const targetRes = document.getElementById('targetResult');
+        const copyBtn = document.getElementById('copyBtn');
+
+        const formatted = searchTime.toLocaleString('ar-EG', {
+            year: 'numeric', month: '2-digit', day: '2-digit',
+            hour: '2-digit', minute: '2-digit'
+        });
+
+        targetRes.innerText = formatted;
+        resultBox.style.display = 'block';
+        copyBtn.style.display = 'block';
+        
+        // تمرير تلقائي للنتيجة
+        resultBox.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function copyToClipboard() {
+        const resText = document.getElementById('targetResult').innerText;
+        const fullMsg = `بناءً على حسابات م. مهند التهامي:\nوقت البحث في الـ DVR هو: ${resText}`;
+        
+        navigator.clipboard.writeText(fullMsg).then(() => {
+            alert("تم نسخ النتيجة بنجاح!");
+        });
+    }
+
+    // التشغيل الأولي
+    buildPickers('wrongTimePicker');
+    buildPickers('desiredTimePicker');
+</script>
+
+</body>
+</html>

